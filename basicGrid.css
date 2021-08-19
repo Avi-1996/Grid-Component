@@ -1,0 +1,36 @@
+.bs-grid.outer {
+  font: "normal 11px calbri ";
+  font-size: small;
+}
+
+.bs.colHeader {
+  border: solid;
+  display: -webkit-inline-box;
+  border-right: 1px solid rgba(0, 0, 0, 0.2);
+
+  border-bottom: none;
+  border-top: 1px solid rgba(0, 0, 0, 0.2);
+  border-left: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.colH:hover {
+  color: #262626;
+  background-image: none;
+  background-color: #9fd5b7;
+}
+.colH {
+  font-weight: bolder;
+  font-size: small;
+}
+
+.bs.bsRow,
+.bs.rowH {
+  display: flex;
+  border-right: 1px solid rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+  border-left: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.bs.bsRow:hover {
+  background-color: rgb(195, 216, 233);
+}

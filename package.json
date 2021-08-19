@@ -1,0 +1,17 @@
+{
+  "name": "basicsheet",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "parcel index.html --open"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "parcel": "^1.12.4",
+    "parcel-bundler": "^1.12.5",
+    "source-list-map": "^2.0.1"
+  }
+}
