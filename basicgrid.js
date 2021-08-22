@@ -4,30 +4,23 @@ export class Grid {
     this.host = typeof host === "string" ? document.querySelector(host) : host;
     this.options = this.defineBasicOptions(options);
 
-    this.basicCellSyle = {
-      height: "20px",
-      width: "112",
-      contain: "strict",
-      backgroundColor: "#f7f7f7",
-      overflow: "hidden",
-      borderRight: "1px solid rgba(0,0,0,.2)",
-      borderBottom: "1px solid rgba(0,0,0,.2)",
-      color: "black",
-    };
+    this.basicCellSyle = {};
 
     this.rowHeaderPanelCount = this.options.rowHeaderCount || 1;
-
-    this.tableWid =
-      parseInt(this.basicCellSyle.width) * this.options.columns.length + 20;
 
     //  this.addRowHeader(this.host);
     this.draWGrid();
 
     this.addEvents(this.host);
 
-    this.defineStyle(this.host, { height: "400" });
+    this.defineStyle(this.host, { height: "400", overflow: "auto" });
 
     this.selectedCell = null;
+
+    this.settings = {
+      colWidth: 112,
+      rowHeight: 20,
+    };
   }
   draWGrid() {
     let { createEl } = this;
@@ -40,10 +33,9 @@ export class Grid {
     let header = createEl("div", { classList: "bs colHeader" });
     this.addRowHeader(header);
     //
-
     for (const col of columns) {
       cellDiv = createEl("div", {
-        classList: "colH",
+        classList: "bs bsCell colH",
         textContent: col.header,
       });
 
@@ -54,14 +46,10 @@ export class Grid {
     outerDiv.appendChild(header);
 
     let dataTable = createEl("div", { classList: "dataTable" });
-    dataTable.style.width = this.tableWid;
+    // dataTable.style.width = this.tableWid;
     dataTable.classList.add("dataTable");
     for (let data of dataSource) {
       rowDiv = createEl("div", { classList: "bs bsRow" });
-      rowDiv.style.width = rowDiv = this.defineStyle(rowDiv, {
-        width: this.tableWid,
-        height: this.basicCellSyle.height,
-      });
       this.addRowHeader(rowDiv);
       for (const col of columns) {
         cellDiv = createEl("div", {
@@ -69,20 +57,11 @@ export class Grid {
           textContent: data[col.binding],
         });
 
-        this.defineStyle(
-          cellDiv,
-
-          this.basicCellSyle
-        );
         rowDiv.appendChild(cellDiv);
       }
 
       dataTable.appendChild(rowDiv);
     }
-    // this.defineStyle(dataTable, {
-    //   height: this.host.style.height,
-    //   overflow: "overlay",
-    // });
     outerDiv.appendChild(dataTable);
     this.host.appendChild(outerDiv);
     this.refresh(dataTable);
@@ -92,14 +71,12 @@ export class Grid {
     let cellDiv;
     for (let i = 0; i < this.rowHeaderPanelCount; i++) {
       cellDiv = this.createEl("div", {
-        classList: "rowH",
+        classList: "bs bsCell rowH",
         textContent: "",
       });
 
-      this.defineStyle(cellDiv, {width:20});
       header.appendChild(cellDiv);
     }
-
   }
 
   defineStyle(el, stylInfo = {}) {
@@ -113,23 +90,25 @@ export class Grid {
   }
 
   addEvents(host) {
-    host.addEventListener("mousedown", (e) => {
+    let self = this;
+    host.addEventListener("mousedown", function (e) {
       let { target } = e;
       let { classList } = target;
       if (classList.contains("bsCell") && !classList.contains("colH"))
-        this.setActiveCell(e.target);
+        self.setActiveCell(e.target);
+      var y = e.pageY - this.offsetTop;
+      var x = e.pageX - this.offsetLeft;
+      console.log("x=>" + +x + "Y==>", y);
+      self.hitTest(x, y);
     });
   }
 
   setActiveCell(el) {
     if (this.selectedCell) {
-      this.selectedCell.style.backgroundColor =
-        this.basicCellSyle.backgroundColor;
-      this.selectedCell.style.color = this.basicCellSyle.color;
+      this.selectedCell.classList.remove("selected");
     }
     if (el) {
-      el.style.backgroundColor = this.options.selectedCellColor;
-      el.style.color = this.options.selectedCellForeColor;
+      el.classList.add("selected");
       this.selectedCell = el;
     }
   }
@@ -140,15 +119,98 @@ export class Grid {
       selectedCellForeColor: "white",
     });
   }
+
   startEdit(el) {
     this.setActiveCell(null);
     el.contentEditable = true;
     el.select();
   }
 
-  refresh(dataTable) {
-   
-   
-    
+  refresh(dataTable) {}
+
+  hitTest(x, y) {
+    let { columns, dataSource } = this.options;
+    let result = {};
+    this.getvzisbleRows(x, y);
+    console.log(x, y);
+    if (x < 20 && y > 20) {
+      result.hitArea = "rowHeader";
+    } else if (
+      parseInt(x / 112) < columns.length &&
+      parseInt(y / 20) < columns.length
+    ) {
+    }
+  }
+
+  getvzisbleRows(x, y) {
+    let hostInfo = this.host
+      .querySelector(".bs-grid.outer")
+      .getBoundingClientRect();
+    let sheetArea;
+    console.log(hostInfo);
+    let row = 0,
+      col = 0;
+
+    let rowHWidth = document.querySelector(".bs.bsCell.rowH").offsetWidth - 1;
+    let rowHeight = document.querySelector(".bs.bsCell.rowH").offsetWidth - 1;
+    let numberOfColumns = hostInfo.width / this.settings.colWidth;
+
+    let numberOfRows =
+      (hostInfo.height - 1 * this.options.dataSource.length) /
+      this.settings.rowHeight;
+
+    // console.log("info", x, y);
+    //  console.log(numberOfColumns, numberOfRows);
+    if (x > rowHWidth) {
+      if (y > 20) {
+        let initalX = 20;
+        let initalY = 20;
+        let colWidth = document.querySelector(".bs.bsCell").offsetWidth;
+        while (initalX + colWidth < x) {
+          initalX += colWidth;
+          col++;
+        }
+        while (initalY + this.settings.rowHeight < y) {
+          initalY += this.settings.rowHeight;
+          row++;
+        }
+      } else {
+        sheetArea = "colHeader";
+      }
+    } else {
+      sheetArea = "rowHeader";
+    }
+    console.log("row=>", row, "col", col);
+  }
+
+  Dimension(elm) {
+    var elmHeight, elmMargin;
+
+    if (document.all) {
+      // IE
+      elmHeight = elm.currentStyle.height;
+      elmMargin =
+        parseInt(elm.currentStyle.marginTop, 10) +
+        parseInt(elm.currentStyle.marginBottom, 10) +
+        "px";
+    } else {
+      // Mozilla
+      elmHeight = document.defaultView
+        .getComputedStyle(elm, "")
+        .getPropertyValue("height");
+      elmMargin =
+        parseInt(
+          document.defaultView
+            .getComputedStyle(elm, "")
+            .getPropertyValue("margin-top")
+        ) +
+        parseInt(
+          document.defaultView
+            .getComputedStyle(elm, "")
+            .getPropertyValue("margin-bottom")
+        ) +
+        "px";
+    }
+    return elmHeight + elmMargin;
   }
 }

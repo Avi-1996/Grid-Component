@@ -3,17 +3,45 @@
   font-size: small;
 }
 
-.bs.colHeader {
-  border: solid;
-  display: -webkit-inline-box;
-  border-right: 1px solid rgba(0, 0, 0, 0.2);
-
-  border-bottom: none;
-  border-top: 1px solid rgba(0, 0, 0, 0.2);
-  border-left: 1px solid rgba(0, 0, 0, 0.2);
+.bs.bsRow:hover {
+  background-color: rgb(127, 184, 230);
+}
+.bs.bsRow {
+  background-color: #d9ebe0;
+}
+.bs.bsCell.rowH {
+  width: 20px;
+  height: 20px;
+  background-color: rgb(212, 210, 210);
 }
 
-.colH:hover {
+.bs.bsCell.selected {
+  color: white;
+  background-color: #404d88;
+}
+
+.bs.colHeader {
+  display: flex;
+  position: sticky;
+  position: -webkit-sticky;
+  top: 0;
+  z-index: 200;
+}
+
+.bs.bsCell.colH {
+  width: 112px;
+  height: 20px;
+  position: sticky;
+  top: 0;
+  overflow: hidden;
+  white-space: nowrap;
+
+  background: rgb(212, 210, 210);
+  border-top: 1px solid rgba(0, 0, 0, 0.2);
+  outline: 0;
+}
+
+.bs.bsCell.colH:hover {
   color: #262626;
   background-image: none;
   background-color: #9fd5b7;
@@ -26,11 +54,34 @@
 .bs.bsRow,
 .bs.rowH {
   display: flex;
-  border-right: 1px solid rgba(0, 0, 0, 0.2);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
-  border-left: 1px solid rgba(0, 0, 0, 0.2);
 }
 
-.bs.bsRow:hover {
-  background-color: rgb(195, 216, 233);
+bs.Cell.colH {
+  width: 112px;
+  height: 20px;
 }
+.bs.bsCell {
+  width: 112px;
+  height: 20px;
+
+  border-right: 1px solid rgba(0, 0, 0, 0.2);
+  border-left: 1px solid rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+}
+/* 
+.bs-grid.outer {
+  height: "20px";
+  width: "112";
+  contain: "strict";
+  overflow: "hidden";
+  border-right: "1px solid rgba(0,0,0,.2)";
+  border-left: "1px solid rgba(0,0,0,.2)";
+}
+.bs.bsRow {
+  height: "20px";
+  width: "112";
+  contain: "strict";
+  overflow: "hidden";
+  border-right: "1px solid rgba(0,0,0,.2)";
+  border-left: "1px solid rgba(0,0,0,.2)";
+} */ ;
