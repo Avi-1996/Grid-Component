@@ -7,6 +7,7 @@ export class Grid {
     this.basicCellSyle = {
       width: 112,
       height: 20,
+      boxSizing: "border-box",
     };
 
     this.rowHeaderPanelCount = this.options.rowHeaderCount || 1;
@@ -23,15 +24,23 @@ export class Grid {
     this.settings = {
       colWidth: 112,
       rowHeight: 20,
+      viewport: {
+        currentTopRowIndex: -1,
+        currentLeftColIndex: -1,
+        currentTopY: -1,
+        currentLeftX: -1,
+      },
     };
   }
+
   draWGrid() {
     let { createEl } = this;
     let { columns, dataSource } = this.options;
-    let outerDiv = this.defineStyle(createEl("div", { classList: "bs-grid outer" }),{width:(this.basicCellSyle.width*this.options.columns.length)});
+    let outerDiv = this.defineStyle(
+      createEl("div", { classList: "bs-grid outer" }),
+      { width: this.basicCellSyle.width * this.options.columns.length }
+    );
     let rowDiv, cellDiv;
-    
-
 
     // addHeader
     let header = createEl("div", { classList: "bs colHeader" });
@@ -60,7 +69,7 @@ export class Grid {
           classList: "bs bsCell",
           textContent: data[col.binding],
         });
-this.defineStyle(cellDiv,this.basicCellSyle)
+        this.defineStyle(cellDiv, this.basicCellSyle);
         rowDiv.appendChild(cellDiv);
       }
 
@@ -79,7 +88,10 @@ this.defineStyle(cellDiv,this.basicCellSyle)
         classList: "bs bsCell rowH",
         textContent: "",
       });
-this.defineStyle(cellDiv,{height:this.basicCellSyle.height,width:20})
+      this.defineStyle(cellDiv, {
+        height: this.basicCellSyle.height,
+        width: 20,
+      });
       header.appendChild(cellDiv);
     }
   }
@@ -105,6 +117,14 @@ this.defineStyle(cellDiv,{height:this.basicCellSyle.height,width:20})
       var x = e.pageX - this.offsetLeft;
       console.log("x=>" + +x + "Y==>", y);
       self.hitTest(x, y);
+    });
+
+    host.addEventListener("scroll", function (e) {
+      self.settings.viewport.currentTopRowIndex = Math.round(
+        e.target.scrollTop / self.basicCellSyle.height
+      );
+      self.settings.viewport.currentTopY = e.target.scrollTop;
+      self.settings.viewport.currentLeftX = e.target.scrollLeft;
     });
   }
 
@@ -152,27 +172,16 @@ this.defineStyle(cellDiv,{height:this.basicCellSyle.height,width:20})
       .querySelector(".bs-grid.outer")
       .getBoundingClientRect();
     let sheetArea;
-    console.log(hostInfo);
+
     let row = 0,
       col = 0;
-
-    let rowHWidth = document.querySelector(".bs.bsCell.rowH").offsetWidth - 1;
-    let rowHeight = document.querySelector(".bs.bsCell.rowH").offsetWidth - 1;
-    let numberOfColumns = hostInfo.width / this.settings.colWidth;
-
-    let numberOfRows =
-      (hostInfo.height - 1 * this.options.dataSource.length) /
-      this.settings.rowHeight;
-
-
+    y += this.settings.viewport.currentTopY;
+    x += this.settings.viewport.currentLeftX;
     if (x > 20) {
       if (y > 20) {
         let initalX = 20;
         let initalY = 20;
-        while (initalX + this.basicCellSyle.width < x) {
-          initalX += this.basicCellSyle.width;
-          col++;
-        }
+        col = Math.floor((x + 5) / this.settings.colWidth);
         while (initalY + this.settings.rowHeight < y) {
           initalY += this.settings.rowHeight;
           row++;
@@ -184,36 +193,5 @@ this.defineStyle(cellDiv,{height:this.basicCellSyle.height,width:20})
       sheetArea = "rowHeader";
     }
     console.log("row=>", row, "col", col);
-  }
-
-  Dimension(elm) {
-    var elmHeight, elmMargin;
-
-    if (document.all) {
-      // IE
-      elmHeight = elm.currentStyle.height;
-      elmMargin =
-        parseInt(elm.currentStyle.marginTop, 10) +
-        parseInt(elm.currentStyle.marginBottom, 10) +
-        "px";
-    } else {
-      // Mozilla
-      elmHeight = document.defaultView
-        .getComputedStyle(elm, "")
-        .getPropertyValue("height");
-      elmMargin =
-        parseInt(
-          document.defaultView
-            .getComputedStyle(elm, "")
-            .getPropertyValue("margin-top")
-        ) +
-        parseInt(
-          document.defaultView
-            .getComputedStyle(elm, "")
-            .getPropertyValue("margin-bottom")
-        ) +
-        "px";
-    }
-    return elmHeight + elmMargin;
   }
 }

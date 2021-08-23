@@ -8,6 +8,7 @@
 }
 .bs.bsRow {
   background-color: #d9ebe0;
+  box-sizing: content-box;
 }
 
 .bs.bsCell.rowH {
@@ -62,8 +63,9 @@ bs.Cell.colH {
   border-left: 1px solid rgba(0, 0, 0, 0.2);
   border-bottom: 1px solid rgba(0, 0, 0, 0.2);
   text-overflow: ellipsis;
+  box-sizing: border-box;
 }
 
-#theGrid{
+#theGrid {
   max-width: 800px;
 }

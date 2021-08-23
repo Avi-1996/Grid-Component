@@ -15,6 +15,7 @@ for (var i = 0; i < 200; i++) {
 // bind a grid to the raw data
 var theGrid = new Grid("#theGrid", {
   columns: [
+    { binding: "id", header: "ID", width: "2*" },
     { binding: "country", header: "Country", width: "2*" },
     { binding: "sales", header: "Sales", width: "*", format: "n2" },
     { binding: "expenses", header: "Expenses", width: "*", format: "n2" },
