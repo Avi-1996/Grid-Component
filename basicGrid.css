@@ -9,9 +9,8 @@
 .bs.bsRow {
   background-color: #d9ebe0;
 }
+
 .bs.bsCell.rowH {
-  width: 20px;
-  height: 20px;
   background-color: rgb(212, 210, 210);
 }
 
@@ -29,13 +28,10 @@
 }
 
 .bs.bsCell.colH {
-  width: 112px;
-  height: 20px;
   position: sticky;
   top: 0;
   overflow: hidden;
   white-space: nowrap;
-
   background: rgb(212, 210, 210);
   border-top: 1px solid rgba(0, 0, 0, 0.2);
   outline: 0;
@@ -60,28 +56,14 @@ bs.Cell.colH {
   width: 112px;
   height: 20px;
 }
-.bs.bsCell {
-  width: 112px;
-  height: 20px;
 
+.bs.bsCell {
   border-right: 1px solid rgba(0, 0, 0, 0.2);
   border-left: 1px solid rgba(0, 0, 0, 0.2);
   border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+  text-overflow: ellipsis;
 }
-/* 
-.bs-grid.outer {
-  height: "20px";
-  width: "112";
-  contain: "strict";
-  overflow: "hidden";
-  border-right: "1px solid rgba(0,0,0,.2)";
-  border-left: "1px solid rgba(0,0,0,.2)";
+
+#theGrid{
+  max-width: 800px;
 }
-.bs.bsRow {
-  height: "20px";
-  width: "112";
-  contain: "strict";
-  overflow: "hidden";
-  border-right: "1px solid rgba(0,0,0,.2)";
-  border-left: "1px solid rgba(0,0,0,.2)";
-} */ ;

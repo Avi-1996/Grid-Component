@@ -4,7 +4,10 @@ export class Grid {
     this.host = typeof host === "string" ? document.querySelector(host) : host;
     this.options = this.defineBasicOptions(options);
 
-    this.basicCellSyle = {};
+    this.basicCellSyle = {
+      width: 112,
+      height: 20,
+    };
 
     this.rowHeaderPanelCount = this.options.rowHeaderCount || 1;
 
@@ -25,9 +28,10 @@ export class Grid {
   draWGrid() {
     let { createEl } = this;
     let { columns, dataSource } = this.options;
-    let outerDiv = createEl("div", { classList: "bs-grid outer" });
+    let outerDiv = this.defineStyle(createEl("div", { classList: "bs-grid outer" }),{width:(this.basicCellSyle.width*this.options.columns.length)});
     let rowDiv, cellDiv;
-    //
+    
+
 
     // addHeader
     let header = createEl("div", { classList: "bs colHeader" });
@@ -56,12 +60,13 @@ export class Grid {
           classList: "bs bsCell",
           textContent: data[col.binding],
         });
-
+this.defineStyle(cellDiv,this.basicCellSyle)
         rowDiv.appendChild(cellDiv);
       }
 
       dataTable.appendChild(rowDiv);
     }
+
     outerDiv.appendChild(dataTable);
     this.host.appendChild(outerDiv);
     this.refresh(dataTable);
@@ -74,7 +79,7 @@ export class Grid {
         classList: "bs bsCell rowH",
         textContent: "",
       });
-
+this.defineStyle(cellDiv,{height:this.basicCellSyle.height,width:20})
       header.appendChild(cellDiv);
     }
   }
@@ -159,15 +164,13 @@ export class Grid {
       (hostInfo.height - 1 * this.options.dataSource.length) /
       this.settings.rowHeight;
 
-    // console.log("info", x, y);
-    //  console.log(numberOfColumns, numberOfRows);
-    if (x > rowHWidth) {
+
+    if (x > 20) {
       if (y > 20) {
         let initalX = 20;
         let initalY = 20;
-        let colWidth = document.querySelector(".bs.bsCell").offsetWidth;
-        while (initalX + colWidth < x) {
-          initalX += colWidth;
+        while (initalX + this.basicCellSyle.width < x) {
+          initalX += this.basicCellSyle.width;
           col++;
         }
         while (initalY + this.settings.rowHeight < y) {
