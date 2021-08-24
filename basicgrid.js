@@ -2,8 +2,18 @@ import "./basicGrid.css";
 export class Grid {
   constructor(host, options) {
     this.host = typeof host === "string" ? document.querySelector(host) : host;
+    this.settings = {
+      colWidth: 112,
+      rowHeight: 20,
+      viewport: {
+        currentTopRowIndex: -1,
+        currentLeftColIndex: -1,
+        currentTopY: -1,
+        currentLeftX: -1,
+      },
+    };
     this.options = this.defineBasicOptions(options);
-
+    this.dataTable = this.createDataSource();
     this.basicCellSyle = {
       width: 112,
       height: 20,
@@ -17,25 +27,12 @@ export class Grid {
 
     this.addEvents(this.host);
 
-    this.defineStyle(this.host, { height: "400", overflow: "auto" });
-
     this.selectedCell = null;
-
-    this.settings = {
-      colWidth: 112,
-      rowHeight: 20,
-      viewport: {
-        currentTopRowIndex: -1,
-        currentLeftColIndex: -1,
-        currentTopY: -1,
-        currentLeftX: -1,
-      },
-    };
   }
 
   draWGrid() {
     let { createEl } = this;
-    let { columns, dataSource } = this.options;
+    let { columns } = this.options;
     let outerDiv = this.defineStyle(
       createEl("div", { classList: "bs-grid outer" }),
       { width: this.basicCellSyle.width * this.options.columns.length }
@@ -52,16 +49,15 @@ export class Grid {
         textContent: col.header,
       });
 
-      this.defineStyle(cellDiv, this.basicCellSyle);
+      this.defineStyle(cellDiv, { width: col.width ? col.width : 112 });
 
       header.appendChild(cellDiv);
     }
     outerDiv.appendChild(header);
 
-    let dataTable = createEl("div", { classList: "dataTable" });
-    // dataTable.style.width = this.tableWid;
-    dataTable.classList.add("dataTable");
-    for (let data of dataSource) {
+    let dataTableGrid = createEl("div", { classList: "dataTableGrid" });
+
+    for (let data of this.dataTable) {
       rowDiv = createEl("div", { classList: "bs bsRow" });
       this.addRowHeader(rowDiv);
       for (const col of columns) {
@@ -69,16 +65,16 @@ export class Grid {
           classList: "bs bsCell",
           textContent: data[col.binding],
         });
-        this.defineStyle(cellDiv, this.basicCellSyle);
+        this.defineStyle(cellDiv, { width: col.width, height: data.height });
         rowDiv.appendChild(cellDiv);
       }
 
-      dataTable.appendChild(rowDiv);
+      dataTableGrid.appendChild(rowDiv);
     }
 
-    outerDiv.appendChild(dataTable);
+    outerDiv.appendChild(dataTableGrid);
     this.host.appendChild(outerDiv);
-    this.refresh(dataTable);
+    this.refresh(dataTableGrid);
   }
 
   addRowHeader(header) {
@@ -102,6 +98,7 @@ export class Grid {
     });
     return el;
   }
+
   createEl(tagName, options = {}) {
     return Object.assign(document.createElement(tagName), options);
   }
@@ -126,6 +123,23 @@ export class Grid {
       self.settings.viewport.currentTopY = e.target.scrollTop;
       self.settings.viewport.currentLeftX = e.target.scrollLeft;
     });
+  }
+
+  createDataSource() {
+    let self = this;
+    let { columns, dataSource } = self.options;
+    let internalDataTable = [];
+
+    columns.map((col) => {
+      col.width = col.width ? col.width : self.settings.colWidth;
+    });
+
+    dataSource.forEach((rowItem) => {
+      rowItem.height = self.settings.rowHeight;
+      internalDataTable.push(rowItem);
+    });
+
+    return internalDataTable;
   }
 
   setActiveCell(el) {
@@ -181,7 +195,13 @@ export class Grid {
       if (y > 20) {
         let initalX = 20;
         let initalY = 20;
-        col = Math.floor((x + 5) / this.settings.colWidth);
+        for (let colItem of this.options.columns) {
+          if (initalX + colItem.width < x) {
+            initalX += colItem.width;
+            col++;
+          }
+        }
+
         while (initalY + this.settings.rowHeight < y) {
           initalY += this.settings.rowHeight;
           row++;

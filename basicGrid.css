@@ -1,6 +1,8 @@
 .bs-grid.outer {
   font: "normal 11px calbri ";
   font-size: small;
+  overflow: overlay;
+  height: inherit;
 }
 
 .bs.bsRow:hover {
@@ -8,6 +10,15 @@
 }
 .bs.bsRow {
   background-color: #d9ebe0;
+  box-sizing: content-box;
+}
+
+.bs.colHeader {
+  display: flex;
+  position: sticky;
+  position: -webkit-sticky;
+  top: 0;
+  z-index: 200;
   box-sizing: content-box;
 }
 
@@ -20,18 +31,9 @@
   background-color: #404d88;
 }
 
-.bs.colHeader {
-  display: flex;
-  position: sticky;
-  position: -webkit-sticky;
-  top: 0;
-  z-index: 200;
-}
-
 .bs.bsCell.colH {
   position: sticky;
   top: 0;
-  overflow: hidden;
   white-space: nowrap;
   background: rgb(212, 210, 210);
   border-top: 1px solid rgba(0, 0, 0, 0.2);
@@ -62,7 +64,6 @@ bs.Cell.colH {
   border-right: 1px solid rgba(0, 0, 0, 0.2);
   border-left: 1px solid rgba(0, 0, 0, 0.2);
   border-bottom: 1px solid rgba(0, 0, 0, 0.2);
-  text-overflow: ellipsis;
   box-sizing: border-box;
 }
 
