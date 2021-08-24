@@ -6,10 +6,10 @@ export class Grid {
       colWidth: 112,
       rowHeight: 20,
       viewport: {
-        currentTopRowIndex: -1,
-        currentLeftColIndex: -1,
-        currentTopY: -1,
-        currentLeftX: -1,
+        currentTopRowIndex: 0,
+        currentLeftColIndex: 0,
+        currentTopY: 0,
+        currentLeftX: 0,
       },
     };
     this.options = this.defineBasicOptions(options);
@@ -25,7 +25,7 @@ export class Grid {
     //  this.addRowHeader(this.host);
     this.draWGrid();
 
-    this.addEvents(this.host);
+    this.addEvents(this.host.querySelector(".bs-grid.outer"));
 
     this.selectedCell = null;
   }
@@ -112,7 +112,6 @@ export class Grid {
         self.setActiveCell(e.target);
       var y = e.pageY - this.offsetTop;
       var x = e.pageX - this.offsetLeft;
-      console.log("x=>" + +x + "Y==>", y);
       self.hitTest(x, y);
     });
 
@@ -170,8 +169,7 @@ export class Grid {
   hitTest(x, y) {
     let { columns, dataSource } = this.options;
     let result = {};
-    this.getvzisbleRows(x, y);
-    console.log(x, y);
+    this.getVisibleRows(x, y);
     if (x < 20 && y > 20) {
       result.hitArea = "rowHeader";
     } else if (
@@ -181,7 +179,7 @@ export class Grid {
     }
   }
 
-  getvzisbleRows(x, y) {
+  getVisibleRows(x, y) {
     let hostInfo = this.host
       .querySelector(".bs-grid.outer")
       .getBoundingClientRect();
@@ -199,9 +197,8 @@ export class Grid {
           if (initalX + colItem.width < x) {
             initalX += colItem.width;
             col++;
-          }
+          } else break;
         }
-
         while (initalY + this.settings.rowHeight < y) {
           initalY += this.settings.rowHeight;
           row++;

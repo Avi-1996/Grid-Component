@@ -15,11 +15,11 @@ for (var i = 0; i < 200; i++) {
 // bind a grid to the raw data
 var theGrid = new Grid("#theGrid", {
   columns: [
-    { binding: "id", header: "ID", width: 112 },
-    { binding: "country", header: "Country", width: 112 },
+    { binding: "id", header: "ID", width: 60 },
+    { binding: "country", header: "Country", width: 60 },
     { binding: "sales", header: "Sales", width: 70 },
-    { binding: "expenses", header: "Expenses", width: 112 },
-    { binding: "hell", header: "Expenses2", width: 112 },
+    { binding: "expenses", header: "Expenses", width: 60 },
+    { binding: "hell", header: "Expenses2", width: 60 },
   ],
   dataSource: data,
 });
