@@ -1,7 +1,9 @@
 import "./basicGrid.css";
+import { CellFactory } from "./CellFactory";
 export class Grid {
   constructor(host, options) {
     this.host = typeof host === "string" ? document.querySelector(host) : host;
+    
     this.settings = {
       colWidth: 112,
       rowHeight: 20,
@@ -19,12 +21,13 @@ export class Grid {
       height: 20,
       boxSizing: "border-box",
     };
-
+    
+    this.cellFactory = new CellFactory(this.options.dataSource,this.columns)
     this.rowHeaderPanelCount = this.options.rowHeaderCount || 1;
 
     //  this.addRowHeader(this.host);
     this.draWGrid();
-
+    this.defineStyle(this.host.querySelector(".bs-grid.outer"),{width:"max-content"})
     this.addEvents(this.host.querySelector(".bs-grid.outer"));
 
     this.selectedCell = null;
@@ -121,6 +124,12 @@ export class Grid {
       );
       self.settings.viewport.currentTopY = e.target.scrollTop;
       self.settings.viewport.currentLeftX = e.target.scrollLeft;
+    });
+
+    host.addEventListener("mousemove", function (e) {
+      var y = e.pageY - this.offsetTop;
+      var x = e.pageX - this.offsetLeft;
+      self.hitTest(x, y);
     });
   }
 

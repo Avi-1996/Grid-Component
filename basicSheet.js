@@ -106,7 +106,6 @@ WorkSheet.prototype.addEvents = function (host) {
     }
   });
   host.addEventListener("focusout", (e) => {
-    console.log("focu", e);
     e.target.contentEditable = false;
   });
   host.addEventListener("mousemove", (e) => {

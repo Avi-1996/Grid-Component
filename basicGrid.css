@@ -3,6 +3,7 @@
   font-size: small;
   overflow: overlay;
   height: inherit;
+  width: fit-content;
 }
 
 .bs.bsRow:hover {
