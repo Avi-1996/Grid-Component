@@ -3,7 +3,7 @@ import { CellFactory } from "./CellFactory";
 export class Grid {
   constructor(host, options) {
     this.host = typeof host === "string" ? document.querySelector(host) : host;
-    
+
     this.settings = {
       colWidth: 112,
       rowHeight: 20,
@@ -21,63 +21,19 @@ export class Grid {
       height: 20,
       boxSizing: "border-box",
     };
-    
-    this.cellFactory = new CellFactory(this.options.dataSource,this.columns)
+
+    this.cellFactory = new CellFactory(this.options, this.host);
     this.rowHeaderPanelCount = this.options.rowHeaderCount || 1;
 
     //  this.addRowHeader(this.host);
-    this.draWGrid();
-    this.defineStyle(this.host.querySelector(".bs-grid.outer"),{width:"max-content"})
+
+    this.cellFactory.draWGrid();
+    this.defineStyle(this.host.querySelector(".bs-grid.outer"), {
+      width: "max-content",
+    });
     this.addEvents(this.host.querySelector(".bs-grid.outer"));
 
     this.selectedCell = null;
-  }
-
-  draWGrid() {
-    let { createEl } = this;
-    let { columns } = this.options;
-    let outerDiv = this.defineStyle(
-      createEl("div", { classList: "bs-grid outer" }),
-      { width: this.basicCellSyle.width * this.options.columns.length }
-    );
-    let rowDiv, cellDiv;
-
-    // addHeader
-    let header = createEl("div", { classList: "bs colHeader" });
-    this.addRowHeader(header);
-    //
-    for (const col of columns) {
-      cellDiv = createEl("div", {
-        classList: "bs bsCell colH",
-        textContent: col.header,
-      });
-
-      this.defineStyle(cellDiv, { width: col.width ? col.width : 112 });
-
-      header.appendChild(cellDiv);
-    }
-    outerDiv.appendChild(header);
-
-    let dataTableGrid = createEl("div", { classList: "dataTableGrid" });
-
-    for (let data of this.dataTable) {
-      rowDiv = createEl("div", { classList: "bs bsRow" });
-      this.addRowHeader(rowDiv);
-      for (const col of columns) {
-        cellDiv = createEl("div", {
-          classList: "bs bsCell",
-          textContent: data[col.binding],
-        });
-        this.defineStyle(cellDiv, { width: col.width, height: data.height });
-        rowDiv.appendChild(cellDiv);
-      }
-
-      dataTableGrid.appendChild(rowDiv);
-    }
-
-    outerDiv.appendChild(dataTableGrid);
-    this.host.appendChild(outerDiv);
-    this.refresh(dataTableGrid);
   }
 
   addRowHeader(header) {
@@ -119,11 +75,20 @@ export class Grid {
     });
 
     host.addEventListener("scroll", function (e) {
+      //console.log(e.target.scrollTop);
       self.settings.viewport.currentTopRowIndex = Math.round(
         e.target.scrollTop / self.basicCellSyle.height
       );
       self.settings.viewport.currentTopY = e.target.scrollTop;
       self.settings.viewport.currentLeftX = e.target.scrollLeft;
+      // (scrollTop) / (docHeight - winHeight);
+      console.log(e.target.scrollTop % self.basicCellSyle.height);
+
+      self.cellFactory.drawChunk(
+        self.getNumberOfRowsToVisble(),
+        self.settings.viewport.currentTopRowIndex,
+        self.host.querySelector(".dataTableGrid")
+      );
     });
 
     host.addEventListener("mousemove", function (e) {
@@ -218,6 +183,14 @@ export class Grid {
     } else {
       sheetArea = "rowHeader";
     }
-    console.log("row=>", row, "col", col);
+    // console.log("row=>", row, "col", col);
+  }
+
+  getNumberOfRowsToVisble() {
+    return (
+      this.host.querySelector(".bs-grid.outer").getBoundingClientRect().height /
+        this.basicCellSyle.height -
+      1
+    );
   }
 }
