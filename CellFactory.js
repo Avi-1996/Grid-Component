@@ -49,6 +49,7 @@ export class CellFactory {
   }
 
   drawChunk(rowCount, fromRow, dataTableGrid) {
+    //debugger
     let rowDiv, cellDiv;
     let { columns } = this.options;
     if (rowCount <= this.dataTable.length) {
@@ -57,19 +58,23 @@ export class CellFactory {
 
       for (
         let i = fromRow;
-        i < parseInt(height.slice(0, height.length - 2) / 20);
+        i < fromRow+rowCount;
         i++
       ) {
         rowDiv = this.createEl("div", { classList: "bs bsRow" });
+
         this.addRowHeader(rowDiv);
-        for (const col of columns) {
+        for (const [index,col] of columns.entries()) {
           cellDiv = this.createEl("div", {
             classList: "bs bsCell",
             textContent: this.dataTable[i][col.binding],
           });
           this.defineStyle(cellDiv, {
-            width: col.width,
-            height: this.dataTable[i].height,
+            width: col.width + "px",
+            height: this.dataTable[i].height + "px",
+            postition:"absolute",
+            top: i*20 + "px",
+            left: index*60+20 + "px"
           });
           rowDiv.appendChild(cellDiv);
         }
@@ -81,6 +86,10 @@ export class CellFactory {
 
   createEl(tagName, options = {}) {
     return Object.assign(document.createElement(tagName), options);
+  }
+
+  updateCell(cell,celltype,row,col){
+
   }
 
   createDataSource() {
@@ -157,4 +166,4 @@ class CellArray {
   getDataItem(row) {}
 }
 
-console.log(new CellArray(2, 2));
+//console.log(new CellArray(2, 2));

@@ -39,3 +39,6 @@ td.rowH {
   border-right-color: #b7b7b7 !important;
   border-bottom-color: #ababab !important;
 }
+.dataTableGrid{
+  position: relative;
+}

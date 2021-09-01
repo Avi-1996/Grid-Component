@@ -63,11 +63,22 @@ bs.Cell.colH {
 
 .bs.bsCell {
   border-right: 1px solid rgba(0, 0, 0, 0.2);
-  border-left: 1px solid rgba(0, 0, 0, 0.2);
+
   border-bottom: 1px solid rgba(0, 0, 0, 0.2);
   box-sizing: border-box;
+}
+.bs.bsRow{
+position: absolute;
+top: 0;
 }
 
 #theGrid {
   max-width: 800px;
+}
+.dataTableGrid{
+  position: relative;
+}
+.bs.bsCell{
+  position: absolute;
+  
 }

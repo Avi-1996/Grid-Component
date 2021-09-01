@@ -17,7 +17,7 @@ var theGrid = new Grid("#theGrid", {
   columns: [
     { binding: "id", header: "ID", width: 60 },
     { binding: "country", header: "Country", width: 60 },
-    { binding: "sales", header: "Sales", width: 70 },
+    { binding: "sales", header: "Sales", width: 60 },
     { binding: "expenses", header: "Expenses", width: 60 },
     { binding: "hell", header: "Expenses2", width: 60 },
   ],

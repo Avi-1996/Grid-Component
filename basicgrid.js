@@ -83,7 +83,7 @@ export class Grid {
       self.settings.viewport.currentLeftX = e.target.scrollLeft;
       // (scrollTop) / (docHeight - winHeight);
       console.log(e.target.scrollTop % self.basicCellSyle.height);
-
+console.log("rows",self.getNumberOfRowsToVisble())
       self.cellFactory.drawChunk(
         self.getNumberOfRowsToVisble(),
         self.settings.viewport.currentTopRowIndex,
@@ -186,11 +186,9 @@ export class Grid {
     // console.log("row=>", row, "col", col);
   }
 
-  getNumberOfRowsToVisble() {
-    return (
-      this.host.querySelector(".bs-grid.outer").getBoundingClientRect().height /
-        this.basicCellSyle.height -
-      1
-    );
+  getNumberOfRowsToVisble(iRow) {
+    let height = this.host.querySelector(".bs-grid.outer").getBoundingClientRect().height;
+return (height - 20) / 20;
+    
   }
 }
