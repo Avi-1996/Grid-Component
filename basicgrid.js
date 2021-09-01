@@ -28,27 +28,9 @@ export class Grid {
     //  this.addRowHeader(this.host);
 
     this.cellFactory.draWGrid();
-    this.defineStyle(this.host.querySelector(".bs-grid.outer"), {
-      width: "max-content",
-    });
     this.addEvents(this.host.querySelector(".bs-grid.outer"));
 
     this.selectedCell = null;
-  }
-
-  addRowHeader(header) {
-    let cellDiv;
-    for (let i = 0; i < this.rowHeaderPanelCount; i++) {
-      cellDiv = this.createEl("div", {
-        classList: "bs bsCell rowH",
-        textContent: "",
-      });
-      this.defineStyle(cellDiv, {
-        height: this.basicCellSyle.height,
-        width: 20,
-      });
-      header.appendChild(cellDiv);
-    }
   }
 
   defineStyle(el, stylInfo = {}) {
@@ -83,7 +65,7 @@ export class Grid {
       self.settings.viewport.currentLeftX = e.target.scrollLeft;
       // (scrollTop) / (docHeight - winHeight);
       console.log(e.target.scrollTop % self.basicCellSyle.height);
-console.log("rows",self.getNumberOfRowsToVisble())
+      console.log("rows", self.getNumberOfRowsToVisble());
       self.cellFactory.drawChunk(
         self.getNumberOfRowsToVisble(),
         self.settings.viewport.currentTopRowIndex,
@@ -187,8 +169,9 @@ console.log("rows",self.getNumberOfRowsToVisble())
   }
 
   getNumberOfRowsToVisble(iRow) {
-    let height = this.host.querySelector(".bs-grid.outer").getBoundingClientRect().height;
-return (height - 20) / 20;
-    
+    let height = this.host
+      .querySelector(".bs-grid.outer")
+      .getBoundingClientRect().height;
+    return (height - 20) / 20;
   }
 }

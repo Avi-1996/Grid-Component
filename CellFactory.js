@@ -25,22 +25,39 @@ export class CellFactory {
     // addHeader
     let header = createEl("div", { classList: "bs colHeader" });
 
-    this.addRowHeader(header);
+    this.addRowHeader(header, 0);
+
+    let topleftPanel = createEl("div", { classList: "bs bs-top-panel" });
     //
-    for (const col of columns) {
+    let leftCorner = createEl("div", { classList: "bs bsCell topLeft" });
+    this.defineStyle(leftCorner, {
+      position: "absolute",
+      left: 0,
+      width: "20px",
+      height: "20px",
+    });
+    topleftPanel.appendChild(leftCorner);
+    header.appendChild(topleftPanel);
+    for (const [index, col] of columns.entries()) {
       cellDiv = createEl("div", {
         classList: "bs bsCell colH",
         textContent: col.header,
       });
 
-      this.defineStyle(cellDiv, { width: col.width ? col.width : 112 });
+      this.defineStyle(cellDiv, {
+        width: col.width ? col.width : 112,
+        position: "absolute",
+        height: 20 + "px",
+        top: "0px",
+        left: index * col.width + 20 + "px",
+      });
 
       header.appendChild(cellDiv);
     }
     outerDiv.appendChild(header);
     let dataTableGrid = createEl("div", { classList: "dataTableGrid" });
 
-    this.drawChunk(20, 0, dataTableGrid);
+    this.drawChunk(14, 0, dataTableGrid);
 
     dataTableGrid.style.height = this.dataTable.length * 20;
     outerDiv.appendChild(dataTableGrid);
@@ -56,25 +73,23 @@ export class CellFactory {
       dataTableGrid.innerHTML = "";
       let height = this.host.style.height;
 
-      for (
-        let i = fromRow;
-        i < fromRow+rowCount;
-        i++
-      ) {
+      for (let i = fromRow; i < fromRow + rowCount; i++) {
         rowDiv = this.createEl("div", { classList: "bs bsRow" });
 
-        this.addRowHeader(rowDiv);
-        for (const [index,col] of columns.entries()) {
+        this.addRowHeader(rowDiv, i);
+        for (const [index, col] of columns.entries()) {
+          let isEven = i % 2 === 0 ? " even" : " odd";
           cellDiv = this.createEl("div", {
-            classList: "bs bsCell",
+            classList: "bs bsCell" + isEven,
             textContent: this.dataTable[i][col.binding],
           });
+
           this.defineStyle(cellDiv, {
             width: col.width + "px",
             height: this.dataTable[i].height + "px",
-            postition:"absolute",
-            top: i*20 + "px",
-            left: index*60+20 + "px"
+            postition: "absolute",
+            top: i * 20 + "px",
+            left: index * col.width + 20 + "px",
           });
           rowDiv.appendChild(cellDiv);
         }
@@ -88,9 +103,7 @@ export class CellFactory {
     return Object.assign(document.createElement(tagName), options);
   }
 
-  updateCell(cell,celltype,row,col){
-
-  }
+  updateCell(cell, celltype, row, col) {}
 
   createDataSource() {
     let self = this;
@@ -102,14 +115,14 @@ export class CellFactory {
     });
 
     dataSource.forEach((rowItem) => {
-      rowItem.height = self.basicCellSyle.rowHeight;
+      rowItem.height = self.basicCellSyle.height;
       internalDataTable.push(rowItem);
     });
 
     return internalDataTable;
   }
 
-  addRowHeader(header) {
+  addRowHeader(header, rowIndex) {
     let cellDiv;
     for (let i = 0; i < this.rowHeaderPanelCount; i++) {
       cellDiv = this.createEl("div", {
@@ -119,6 +132,8 @@ export class CellFactory {
       this.defineStyle(cellDiv, {
         height: this.basicCellSyle.height,
         width: 20,
+        position: "absolute",
+        top: rowIndex * 20 + "px",
       });
       header.appendChild(cellDiv);
     }

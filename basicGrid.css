@@ -3,14 +3,17 @@
   font-size: small;
   overflow: overlay;
   height: inherit;
-  width: fit-content;
+  width: "400px";
+  box-sizing: border-box;
 }
-
+.bs.bsCell.odd {
+  background-color: #f7f7f7;
+}
 .bs.bsRow:hover {
   background-color: rgb(127, 184, 230);
 }
 .bs.bsRow {
-  background-color: #d9ebe0;
+  background-color: #fff;
   box-sizing: content-box;
 }
 
@@ -20,11 +23,11 @@
   position: -webkit-sticky;
   top: 0;
   z-index: 200;
-  box-sizing: content-box;
+  box-sizing: border-box;
 }
 
 .bs.bsCell.rowH {
-  background-color: rgb(212, 210, 210);
+  background-color: #eee;
 }
 
 .bs.bsCell.selected {
@@ -36,8 +39,7 @@
   position: sticky;
   top: 0;
   white-space: nowrap;
-  background: rgb(212, 210, 210);
-  border-top: 1px solid rgba(0, 0, 0, 0.2);
+  background: #eee;
   outline: 0;
 }
 
@@ -49,6 +51,7 @@
 .colH {
   font-weight: bolder;
   font-size: small;
+  position: relative;
 }
 
 .bs.bsRow,
@@ -56,29 +59,18 @@
   display: flex;
 }
 
-bs.Cell.colH {
-  width: 112px;
-  height: 20px;
-}
-
 .bs.bsCell {
   border-right: 1px solid rgba(0, 0, 0, 0.2);
-
   border-bottom: 1px solid rgba(0, 0, 0, 0.2);
   box-sizing: border-box;
-}
-.bs.bsRow{
-position: absolute;
-top: 0;
+  position: absolute;
 }
 
-#theGrid {
-  max-width: 800px;
-}
-.dataTableGrid{
-  position: relative;
-}
-.bs.bsCell{
+.bs.bsRow {
   position: absolute;
-  
+  top: 0;
+}
+
+.dataTableGrid {
+  position: relative;
 }

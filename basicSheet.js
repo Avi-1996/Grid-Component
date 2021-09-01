@@ -66,15 +66,7 @@ function createTable(options) {
   return table;
 }
 
-function preventEvents(td) {
-  //   ["keydown"].forEach((ev) => {
-  //     td.addEventListener(ev, (e) => {
-  //       //  console.log(e);
-  //       e.code === "Enter" && e.preventDefault();
-  //     });
-  //   });
-  // getExcelColHead(1);
-}
+function preventEvents(td) {}
 
 function getExcelColHead(index, text) {
   if (index === 0) {
