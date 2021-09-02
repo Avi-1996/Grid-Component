@@ -38,20 +38,21 @@ export class CellFactory {
     });
     topleftPanel.appendChild(leftCorner);
     header.appendChild(topleftPanel);
+    let left =20;
     for (const [index, col] of columns.entries()) {
       cellDiv = createEl("div", {
         classList: "bs bsCell colH",
         textContent: col.header,
       });
-
+   
       this.defineStyle(cellDiv, {
         width: col.width ? col.width : 112,
         position: "absolute",
         height: 20 + "px",
         top: "0px",
-        left: index * col.width + 20 + "px",
+        left: left  + "px",
       });
-
+      left+=col.width
       header.appendChild(cellDiv);
     }
     outerDiv.appendChild(header);
@@ -77,6 +78,7 @@ export class CellFactory {
         rowDiv = this.createEl("div", { classList: "bs bsRow" });
 
         this.addRowHeader(rowDiv, i);
+        let left = 20;
         for (const [index, col] of columns.entries()) {
           let isEven = i % 2 === 0 ? " even" : " odd";
           cellDiv = this.createEl("div", {
@@ -89,8 +91,9 @@ export class CellFactory {
             height: this.dataTable[i].height + "px",
             postition: "absolute",
             top: i * 20 + "px",
-            left: index * col.width + 20 + "px",
+            left: left  + "px",
           });
+          left+=col.width
           rowDiv.appendChild(cellDiv);
         }
 
@@ -98,7 +101,9 @@ export class CellFactory {
       }
     }
   }
+updateCellContent(fromRow,rowCount){
 
+}
   createEl(tagName, options = {}) {
     return Object.assign(document.createElement(tagName), options);
   }
