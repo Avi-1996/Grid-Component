@@ -14,8 +14,8 @@ export class Grid {
         currentLeftX: 0,
       },
     };
+
     this.options = this.defineBasicOptions(options);
-    this.dataTable = this.createDataSource();
     this.basicCellSyle = {
       width: 112,
       height: 20,
@@ -61,15 +61,18 @@ export class Grid {
       self.settings.viewport.currentTopRowIndex = Math.round(
         e.target.scrollTop / self.basicCellSyle.height
       );
+      self.settings.viewport.currentBottomRowIndex = Math.round(e.target.scrollTop / self.basicCellSyle.height + self.getNumberOfRowsToVisble() - 1)
       self.settings.viewport.currentTopY = e.target.scrollTop;
       self.settings.viewport.currentLeftX = e.target.scrollLeft;
       // (scrollTop) / (docHeight - winHeight);
       console.log(e.target.scrollTop % self.basicCellSyle.height);
-      console.log("rows", self.getNumberOfRowsToVisble());
+      console.log("botom", self.settings.viewport.currentBottomRowIndex);
+      debugger
+      if(self.settings.viewport.currentBottomRowIndex  < self.options.dataSource.length)
       self.cellFactory.drawChunk(
         self.getNumberOfRowsToVisble(),
         self.settings.viewport.currentTopRowIndex,
-        self.host.querySelector(".dataTableGrid")
+        self.host.querySelector(".bs-grid.outer")
       );
     });
 
@@ -80,22 +83,6 @@ export class Grid {
     });
   }
 
-  createDataSource() {
-    let self = this;
-    let { columns, dataSource } = self.options;
-    let internalDataTable = [];
-
-    columns.map((col) => {
-      col.width = col.width ? col.width : self.settings.colWidth;
-    });
-
-    dataSource.forEach((rowItem) => {
-      rowItem.height = self.settings.rowHeight;
-      internalDataTable.push(rowItem);
-    });
-
-    return internalDataTable;
-  }
 
   setActiveCell(el) {
     if (this.selectedCell) {
@@ -172,6 +159,6 @@ export class Grid {
     let height = this.host
       .querySelector(".bs-grid.outer")
       .getBoundingClientRect().height;
-    return (height - 20) / 20;
+    return (height) / 20;
   }
 }

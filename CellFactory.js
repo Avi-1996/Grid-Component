@@ -36,48 +36,53 @@ export class CellFactory {
       width: "20px",
       height: "20px",
     });
+
     topleftPanel.appendChild(leftCorner);
     header.appendChild(topleftPanel);
-    let left =20;
+    let left = 20;
+
+
     for (const [index, col] of columns.entries()) {
       cellDiv = createEl("div", {
         classList: "bs bsCell colH",
         textContent: col.header,
       });
-   
+
       this.defineStyle(cellDiv, {
         width: col.width ? col.width : 112,
         position: "absolute",
         height: 20 + "px",
         top: "0px",
-        left: left  + "px",
+        left: left + "px",
       });
-      left+=col.width
+      left += col.width
       header.appendChild(cellDiv);
     }
     outerDiv.appendChild(header);
     let dataTableGrid = createEl("div", { classList: "dataTableGrid" });
 
-    this.drawChunk(14, 0, dataTableGrid);
 
     dataTableGrid.style.height = this.dataTable.length * 20;
     outerDiv.appendChild(dataTableGrid);
+    this.drawChunk(this.host.getBoundingClientRect().height /20, 0, outerDiv);
     this.host.appendChild(outerDiv);
     // this.refresh(dataTableGrid);
   }
 
-  drawChunk(rowCount, fromRow, dataTableGrid) {
+  drawChunk(rowCount, fromRow, grid) {
     //debugger
     let rowDiv, cellDiv;
+    let dataTableGrid = grid.querySelector(".dataTableGrid")
     let { columns } = this.options;
-    if (rowCount <= this.dataTable.length) {
+    console.log(this.getNumberOfRowsToVisble()+1)
+    if (fromRow < this.dataTable.length) {
       dataTableGrid.innerHTML = "";
       let height = this.host.style.height;
-
+      dataTableGrid.appendChild(this.addRowPanel(fromRow, rowCount,1));
       for (let i = fromRow; i < fromRow + rowCount; i++) {
         rowDiv = this.createEl("div", { classList: "bs bsRow" });
 
-        this.addRowHeader(rowDiv, i);
+        //  this.addRowHeader(rowDiv, i);
         let left = 20;
         for (const [index, col] of columns.entries()) {
           let isEven = i % 2 === 0 ? " even" : " odd";
@@ -91,9 +96,9 @@ export class CellFactory {
             height: this.dataTable[i].height + "px",
             postition: "absolute",
             top: i * 20 + "px",
-            left: left  + "px",
+            left: left + "px",
           });
-          left+=col.width
+          left += col.width
           rowDiv.appendChild(cellDiv);
         }
 
@@ -101,14 +106,46 @@ export class CellFactory {
       }
     }
   }
-updateCellContent(fromRow,rowCount){
 
-}
+  addRowPanel(fromRow, rowCount, colCount) {
+    let rowHCell, rowDiv;
+    let rowHPanel = this.createEl("div",
+      {
+        classList: "bs bsrowH"
+      })
+    for (let row = fromRow; row < fromRow + rowCount; row++) {
+      rowDiv = this.createEl("div", {
+        classList: "bs rowH",
+        textContent: ""
+      })
+      for (let col = 0; col < colCount; col++) {
+        rowHCell = this.createEl("div", {
+          classList: "bs bsCell rowH",
+          textContent: ""
+        })
+        this.defineStyle( rowHCell, {
+          height: this.basicCellSyle.height,
+          width: 20,
+          position: "absolute",
+          top: row * 20 + 20 + "px",
+        });
+        rowDiv.appendChild(rowHCell)
+
+      }
+  
+      rowHPanel.appendChild(rowDiv)
+    }
+    // this.defineStyle(rowHPanel, { top: "20px" })
+    return rowHPanel
+  }
+  updateCellContent(fromRow, rowCount) {
+
+  }
   createEl(tagName, options = {}) {
     return Object.assign(document.createElement(tagName), options);
   }
 
-  updateCell(cell, celltype, row, col) {}
+  updateCell(cell, celltype, row, col) { }
 
   createDataSource() {
     let self = this;
@@ -143,11 +180,19 @@ updateCellContent(fromRow,rowCount){
       header.appendChild(cellDiv);
     }
   }
+
   defineStyle(el, stylInfo = {}) {
     Object.keys(stylInfo).forEach((styleProp) => {
       el.style[styleProp] = stylInfo[styleProp];
     });
     return el;
+  }
+
+  
+  getNumberOfRowsToVisble(iRow) {
+    let height = this.host
+      .getBoundingClientRect().height;
+    return (height) / 20;
   }
 }
 
@@ -162,7 +207,7 @@ class CellArray {
       while (length--) arr.push(null);
       return arr;
     })();
-    //console.log(this.dataArray)
+
   }
   /*
 1,2
@@ -183,7 +228,5 @@ class CellArray {
     //this.dataArray[(row*this.colCount +col-1)] = data
   }
 
-  getDataItem(row) {}
+  getDataItem(row) { }
 }
-
-//console.log(new CellArray(2, 2));
