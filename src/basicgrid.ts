@@ -1,6 +1,32 @@
+import "reflect-metadata";
 import "./basicGrid.css";
+
 import { CellFactory } from "./CellFactory";
-export class Grid {
+export class Grid implements GridStructure {
+  host: HTMLElement
+  settings: {
+    colWidth: number,
+    rowHeight: number,
+    viewport: {
+      currentTopRowIndex: number,
+      currentLeftColIndex: number,
+      currentTopY: number,
+      currentLeftX: number,
+    },
+  }
+  options: {
+    dataSource: [], columns: [], rowHeaderCount: number,
+
+  }
+  basicCellSyle: {
+    width: number,
+    height: number,
+    boxSizing: string,
+  }
+  cellFactory: CellFactory
+  rowHeaderPanelCount: number
+  selectedCell: HTMLElement
+
   constructor(host, options) {
     this.host = typeof host === "string" ? document.querySelector(host) : host;
 
@@ -45,7 +71,7 @@ export class Grid {
   }
 
   addEvents(host) {
-    let self = this;
+    let self = (this as any);
     host.addEventListener("mousedown", function (e) {
       let { target } = e;
       let { classList } = target;
@@ -61,19 +87,34 @@ export class Grid {
       self.settings.viewport.currentTopRowIndex = Math.round(
         e.target.scrollTop / self.basicCellSyle.height
       );
-      self.settings.viewport.currentBottomRowIndex = Math.round(e.target.scrollTop / self.basicCellSyle.height + self.getNumberOfRowsToVisble() - 1)
+      self.settings.viewport.currentBottomRowIndex = Math.round(
+        e.target.scrollTop / self.basicCellSyle.height +
+        self.getNumberOfRowsToVisble() -
+        1
+      );
       self.settings.viewport.currentTopY = e.target.scrollTop;
       self.settings.viewport.currentLeftX = e.target.scrollLeft;
-      // (scrollTop) / (docHeight - winHeight);
-      console.log(e.target.scrollTop % self.basicCellSyle.height);
-      console.log("botom", self.settings.viewport.currentBottomRowIndex);
-      debugger
-      if(self.settings.viewport.currentBottomRowIndex  < self.options.dataSource.length)
-      self.cellFactory.drawChunk(
-        self.getNumberOfRowsToVisble(),
-        self.settings.viewport.currentTopRowIndex,
-        self.host.querySelector(".bs-grid.outer")
-      );
+
+      if (
+        self.settings.viewport.currentBottomRowIndex <=
+        (self.options.dataSource.length - 1)
+      ) {
+
+
+        self.cellFactory.drawChunk(
+          self.getNumberOfRowsToVisble(),
+          self.settings.viewport.currentTopRowIndex,
+          self.host.querySelector(".bs-grid.outer")
+        );
+        // self.cellFactory.updateCellContent(
+        //   self.settings.viewport.currentTopRowIndex,
+        //   self.getNumberOfRowsToVisble()
+        // );
+        // console.log(
+        //   "bottomRow==>",
+        //   self.settings.viewport.currentBottomRowIndex
+        // );
+      }
     });
 
     host.addEventListener("mousemove", function (e) {
@@ -82,7 +123,6 @@ export class Grid {
       self.hitTest(x, y);
     });
   }
-
 
   setActiveCell(el) {
     if (this.selectedCell) {
@@ -107,7 +147,7 @@ export class Grid {
     el.select();
   }
 
-  refresh(dataTable) {}
+  refresh(dataTable) { }
 
   hitTest(x, y) {
     let { columns, dataSource } = this.options;
@@ -152,13 +192,49 @@ export class Grid {
     } else {
       sheetArea = "rowHeader";
     }
-    // console.log("row=>", row, "col", col);
+    console.log("row=>", row, "col", col);
   }
 
   getNumberOfRowsToVisble(iRow) {
     let height = this.host
       .querySelector(".bs-grid.outer")
       .getBoundingClientRect().height;
-    return (height) / 20;
+    return height / 20;
   }
+}
+
+
+export interface GridStructure {
+  host: HTMLElement
+  settings: {
+    colWidth: number,
+    rowHeight: number,
+    viewport: {
+      currentTopRowIndex: number,
+      currentLeftColIndex: number,
+      currentTopY: number,
+      currentLeftX: number,
+    },
+  }
+  options: {
+    dataSource: [], columns: [], rowHeaderCount: number,
+
+  }
+  basicCellSyle: {
+    width: number,
+    height: number,
+    boxSizing: string,
+  }
+  cellFactory: CellFactory
+  rowHeaderPanelCount: number
+  selectedCell: HTMLElement
+
+  getNumberOfRowsToVisble: (iRow: number) => number
+
+  refresh: (dataTable: HTMLElement) => void
+
+  hitTest: (x: number, y: number) => void
+
+  getVisibleRows: (x: number, y: number) => void
+
 }

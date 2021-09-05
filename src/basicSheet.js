@@ -1,3 +1,4 @@
+import "reflect-metadata";
 import "./basicSheetStyle.css";
 import { publish, subscribe } from "./eventBus";
 export function WorkSheet(host, options) {

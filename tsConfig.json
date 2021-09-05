@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+      "emitDecoratorMetadata": true,
+      "experimentalDecorators": true,
+      "esModuleInterop": true,
+      "sourceMap": true,
+      "allowJs": true,
+      "lib": [
+        "es2017",
+        "dom"
+      ],
+      "rootDir": "src",
+      "moduleResolution": "node"
+    }
+  }
