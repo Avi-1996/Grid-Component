@@ -8,10 +8,13 @@ export class Grid implements GridStructure {
     colWidth: number,
     rowHeight: number,
     viewport: {
+      scrollTop: number,
       currentTopRowIndex: number,
       currentLeftColIndex: number,
+      currentBottomRowIndex: number,
       currentTopY: number,
       currentLeftX: number,
+
     },
   }
   options: {
@@ -30,16 +33,7 @@ export class Grid implements GridStructure {
   constructor(host, options) {
     this.host = typeof host === "string" ? document.querySelector(host) : host;
 
-    this.settings = {
-      colWidth: 112,
-      rowHeight: 20,
-      viewport: {
-        currentTopRowIndex: 0,
-        currentLeftColIndex: 0,
-        currentTopY: 0,
-        currentLeftX: 0,
-      },
-    };
+
 
     this.options = this.defineBasicOptions(options);
     this.basicCellSyle = {
@@ -57,6 +51,18 @@ export class Grid implements GridStructure {
     this.addEvents(this.host.querySelector(".bs-grid.outer"));
 
     this.selectedCell = null;
+
+    this.settings = {
+      colWidth: 112,
+      rowHeight: 20,
+      viewport: {
+        currentTopRowIndex: 0,
+        currentLeftColIndex: 0,
+        currentTopY: 0,
+        currentLeftX: 0,
+        currentBottomRowIndex: this.getNumberOfRowsToVisble(),
+      },
+    };
   }
 
   defineStyle(el, stylInfo = {}) {
@@ -84,6 +90,20 @@ export class Grid implements GridStructure {
 
     host.addEventListener("scroll", function (e) {
       //console.log(e.target.scrollTop);
+      let delY = e.target.scrollTop - self.settings.viewport.scrollTop
+
+      self.cellFactory.drawChunk(
+        self.settings.viewport.currentTopRowIndex,
+        self.getNumberOfRowsToVisble(),
+        self.host.querySelector(".bs-grid.outer"),
+        self.settings.viewport,
+        e.target.scrollTop,
+        delY < 0 ? true : false);
+      self.settings.viewport.scrollTop = e.target.scrollTop
+
+
+
+
       self.settings.viewport.currentTopRowIndex = Math.round(
         e.target.scrollTop / self.basicCellSyle.height
       );
@@ -95,26 +115,31 @@ export class Grid implements GridStructure {
       self.settings.viewport.currentTopY = e.target.scrollTop;
       self.settings.viewport.currentLeftX = e.target.scrollLeft;
 
-      if (
-        self.settings.viewport.currentBottomRowIndex <=
-        (self.options.dataSource.length - 1)
-      ) {
+      //console.log(e.deltaY)
+
+      // if (
+      //   self.settings.viewport.currentBottomRowIndex <=
+      //   (self.options.dataSource.length - 1)
+      // ) {-
 
 
-        self.cellFactory.drawChunk(
-          self.getNumberOfRowsToVisble(),
-          self.settings.viewport.currentTopRowIndex,
-          self.host.querySelector(".bs-grid.outer")
-        );
-        // self.cellFactory.updateCellContent(
-        //   self.settings.viewport.currentTopRowIndex,
-        //   self.getNumberOfRowsToVisble()
-        // );
-        // console.log(
-        //   "bottomRow==>",
-        //   self.settings.viewport.currentBottomRowIndex
-        // );
-      }
+      //   self.cellFactory.drawChunk(
+      //     self.getNumberOfRowsToVisble(),
+      //     self.settings.viewport.currentTopRowIndex,
+      //     self.host.querySelector(".bs-grid.outer"),
+      //     self.settings.viewport,
+      //     e.target.scrollTop
+      //   );
+
+      //   // self.cellFactory.updateCellContent(
+      //   //   self.settings.viewport.currentTopRowIndex,
+      //   //   self.getNumberOfRowsToVisble()
+      //   // );
+      //   // console.log(
+      //   //   "bottomRow==>",
+      //   //   self.settings.viewport.currentBottomRowIndex
+      //   // );
+      // }
     });
 
     host.addEventListener("mousemove", function (e) {
@@ -195,11 +220,11 @@ export class Grid implements GridStructure {
     console.log("row=>", row, "col", col);
   }
 
-  getNumberOfRowsToVisble(iRow) {
+  getNumberOfRowsToVisble() {
     let height = this.host
       .querySelector(".bs-grid.outer")
       .getBoundingClientRect().height;
-    return height / 20;
+    return Math.floor(height / 20) - 1;
   }
 }
 

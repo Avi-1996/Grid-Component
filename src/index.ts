@@ -3,7 +3,7 @@ import { Grid } from "./basicgrid";
 // create some random data
 var countries = "US,Germany,UK,Japan,Italy,Greece".split(",");
 var data = [];
-for (var i = 0; i < 100; i++) {
+for (var i = 0; i < 200000; i++) {
   data.push({
     id: i,
     country: countries[i % countries.length],
