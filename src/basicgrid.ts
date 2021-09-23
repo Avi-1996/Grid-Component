@@ -91,8 +91,7 @@ export class Grid implements GridStructure {
     host.addEventListener("scroll", function (e) {
       //console.log(e.target.scrollTop);
       let delY = e.target.scrollTop - self.settings.viewport.scrollTop
-
-      self.cellFactory.drawChunk(
+        self.cellFactory.drawChunk(
         self.settings.viewport.currentTopRowIndex,
         self.getNumberOfRowsToVisble(),
         self.host.querySelector(".bs-grid.outer"),
@@ -104,14 +103,14 @@ export class Grid implements GridStructure {
 
 
 
-      self.settings.viewport.currentTopRowIndex = Math.round(
-        e.target.scrollTop / self.basicCellSyle.height
-      );
-      self.settings.viewport.currentBottomRowIndex = Math.round(
-        e.target.scrollTop / self.basicCellSyle.height +
-        self.getNumberOfRowsToVisble() -
-        1
-      );
+      // self.settings.viewport.currentTopRowIndex = Math.round(
+      //   e.target.scrollTop / self.basicCellSyle.height
+      // );
+      // self.settings.viewport.currentBottomRowIndex = Math.round(
+      //   e.target.scrollTop / self.basicCellSyle.height +
+      //   self.getNumberOfRowsToVisble() -
+      //   1
+      // );
       self.settings.viewport.currentTopY = e.target.scrollTop;
       self.settings.viewport.currentLeftX = e.target.scrollLeft;
 
@@ -217,7 +216,7 @@ export class Grid implements GridStructure {
     } else {
       sheetArea = "rowHeader";
     }
-    console.log("row=>", row, "col", col);
+  //  console.log("row=>", row, "col", col);
   }
 
   getNumberOfRowsToVisble() {

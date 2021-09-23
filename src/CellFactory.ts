@@ -92,18 +92,15 @@ export class CellFactory {
     let { columns } = this.options
     let el, left = 20;
     let cellArr = [];
-    let rowDiv = this.createEl("div", { classList: "bs bsRow" });
     for (let i = bottomRow + 1; i < desposedRows + bottomRow + 1; i++) {
       left = 20
 
       for (let j = 0; j < columns.length; j++) {
-        el = this.createEl("div", { classList: "bs bsCell" });
+        el = this.createEl("div", { classList: "bs bsCell " + (i%2 ===0) ? "even" : "odd" });
         this.defineStyle(el, { top: (i * 20) + "px", left: left })
         left += columns[j].width;
-        rowDiv.appendChild(el)
         cellArr.push(el)
       }
-      this.host.querySelector(".dataTableGrid").appendChild(rowDiv)
     }
     return cellArr;
   }
@@ -122,11 +119,17 @@ export class CellFactory {
       this.host.querySelector(".dataTableGrid")
 
       this.internalElements.deleteRows(disposedRows, true);
-      this.internalElements.insertRows((rows as []), true);
-      this.insertToData(this.internalElements.dataArray.length - 1, rows)
+      this.internalElements.insertRows((rows as []), false);
+      this.updateCellContent(viewport.currentTopRowIndex+disposedRows, visibleRows)
+      debugger
+   //   this.insertToData(this.internalElements.dataArray.length - 1, rows)
       // this.internalElements.dataArray.splice(this.internalElements.dataArray.length - 1, 0, ...rows)
       debugger;
-      this.updateCellContent(viewport.currentTopRowIndex, visibleRows)
+      this.refresh(viewport.currentBottomRowIndex-disposedRows, disposedRows )
+
+
+    viewport.currentBottomRowIndex += disposedRows;
+    viewport.currentTopBottomRow += disposedRows;
     }
 
     // if (pixelScrolled / 20 > 1) {
@@ -219,27 +222,38 @@ export class CellFactory {
   insertToData(rowArr) {
     let internalEls = this.internalElements.dataArray;
     for (let i = 0; i < rowArr; i += this.options.columns.length) {
-
-
-
     }
   }
+
+  refresh(fromRow, rowCount){
+    debugger
+    let rowDiv;
+    let dataTableGrid = this.host.querySelector(".dataTableGrid");
+    for (let row = fromRow, iRow = 0; iRow < rowCount; row++, iRow++) {
+      rowDiv = this.createEl("div",{classList:"bs bsRow"})
+        for (let col = 0; col < this.options.columns.length; col++) {
+          // console.log(this.internalElements.getData(row, col),row,col);
+          rowDiv.appendChild(this.internalElements.getData(row, col))
+        }
+        dataTableGrid.appendChild(rowDiv)
+      }
+  }
+
   updateCellContent(fromRow, rowCount) {
     let i = 0;
     let top = 20;
     let visibleRows = this.getNumberOfRowsToVisble() - fromRow;
+    let rowDiv;
+    let cellDiv;
     let dataTableGrid = this.host.querySelector(".dataTableGrid");
+    debugger
     for (let row = fromRow, iRow = 0; iRow < rowCount; row++, iRow++) {
+    rowDiv = this.createEl("div",{classList:"bs bsRow"})
       for (let col = 0; col < this.options.columns.length; col++) {
         this.internalElements.setData(iRow, col, (cellDiv) => {
-
           if (cellDiv) {
-
             const columnItem = this.options.columns[col];
-            if (this.dataTable[row][columnItem.binding] === 2) {
-              debugger
-            }
-            console.log(row, iRow, this.dataTable[row][columnItem.binding], col)
+
             cellDiv.textContent = this.dataTable[row][columnItem.binding];
           }
         })
@@ -321,7 +335,7 @@ class CellArray {
           cellDiv = this.createEl("div", {
             classList: "bs bsCell" + (row % 2 == 0 ? " even" : " odd"),
           });
-          arr[row * colCount + col - 1] = cellDiv;
+          arr[row * colCount + col] = cellDiv;
 
         }
       }
@@ -333,34 +347,37 @@ class CellArray {
     return Object.assign(document.createElement(tagName), options);
   }
   getData(row, col) {
-    return this.dataArray[row * this.colCount + col - 1];
+    return this.dataArray[row * this.colCount + col ];
   }
   setData(row, col, callback) {
-    let item = this.dataArray[row * this.colCount + col - 1];
+    let item = this.dataArray[row * this.colCount + col];
     if (callback instanceof Function) {
 
       callback(item);
     } else {
-      this.dataArray[row * this.colCount + col - 1] = callback;
+      this.dataArray[row * this.colCount + col] = callback;
     }
   }
   deleteRows(noOFRowsTodelete, fromBeg) {
-    let row = fromBeg ? 0 : this.dataArray.length - (noOFRowsTodelete * this.colCount);
+  let row = fromBeg ? 0 : this.dataArray.length - (noOFRowsTodelete * this.colCount);
 
-    for (let i = row; i < noOFRowsTodelete * this.colCount; i++) {
-      (this.dataArray[i] as HTMLElement).parentElement.remove();
-      (this.dataArray[i] as HTMLElement).remove()
-    }
-
-
+  for (let i = row; i < noOFRowsTodelete * this.colCount  ; i+=this.colCount) {
+    this.dataArray.splice(i,this.colCount);
   }
+}
+
+
+
+  
 
   insertRows(rowArrayToInsert: [], fromBeg: boolean) {
     let row = fromBeg ? 0 : this.dataArray.length
+if(fromBeg)
+(this.dataArray as any)= [].concat(rowArrayToInsert,this.dataArray)
+else{
+  (this.dataArray as any)= [].concat(this.dataArray,rowArrayToInsert)
+}
 
-    rowArrayToInsert.forEach(cell => {
-      this.dataArray.splice(row, 0, cell)
-    })
   }
 
 
