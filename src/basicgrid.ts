@@ -56,6 +56,7 @@ export class Grid implements GridStructure {
       colWidth: 112,
       rowHeight: 20,
       viewport: {
+        scrollTop:0,
         currentTopRowIndex: 0,
         currentLeftColIndex: 0,
         currentTopY: 0,
@@ -96,7 +97,7 @@ export class Grid implements GridStructure {
         self.getNumberOfRowsToVisble(),
         self.host.querySelector(".bs-grid.outer"),
         self.settings.viewport,
-        e.target.scrollTop,
+        e.target.scrollTop ,
         delY < 0 ? true : false);
       self.settings.viewport.scrollTop = e.target.scrollTop
 

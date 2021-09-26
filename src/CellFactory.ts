@@ -96,8 +96,9 @@ export class CellFactory {
       left = 20
 
       for (let j = 0; j < columns.length; j++) {
-        el = this.createEl("div", { classList: "bs bsCell " + (i%2 ===0) ? "even" : "odd" });
-        this.defineStyle(el, { top: (i * 20) + "px", left: left })
+        let cellClass = "bs bsCell " + ((i%2 ===0) ? "even" : "odd");
+        el = this.createEl("div", { classList: cellClass });
+        this.defineStyle(el, {width: columns[j].width, top: (i * 20) + "px", left: left })
         left += columns[j].width;
         cellArr.push(el)
       }
@@ -120,45 +121,19 @@ export class CellFactory {
 
       this.internalElements.deleteRows(disposedRows, true);
       this.internalElements.insertRows((rows as []), false);
-      this.updateCellContent(viewport.currentTopRowIndex+disposedRows, visibleRows)
+
       debugger
    //   this.insertToData(this.internalElements.dataArray.length - 1, rows)
       // this.internalElements.dataArray.splice(this.internalElements.dataArray.length - 1, 0, ...rows)
       debugger;
-      this.refresh(viewport.currentBottomRowIndex-disposedRows, disposedRows )
-
+      this.refresh(false, disposedRows )
+      this.updateCellContent(viewport.currentTopRowIndex + disposedRows, visibleRows)
 
     viewport.currentBottomRowIndex += disposedRows;
-    viewport.currentTopBottomRow += disposedRows;
+    viewport.currentTopRowIndex += disposedRows;
     }
 
-    // if (pixelScrolled / 20 > 1) {
-    //   let top = pixelScrolled;
-    //   for (let row = 0; Math.ceil(top / 20) > 1; top -= 20) {
 
-    //     // if (row % this.getNumberOfRowsToVisble() === 0) {
-    //     //   row = 0
-    //     // }
-
-    //     for (let colIndex = 0; colIndex < columns.length; colIndex++) {
-    //       cellDiv = this.internalElements.getData(row, colIndex)
-    //       if (!cellDiv) {
-    //         console.log(pixelScrolled)
-    //         debugger
-    //       }
-    //       this.internalElements.setData(row, colIndex, (cellDiv) => {
-
-    //         this.defineStyle(cellDiv, {
-    //           top: (fromRow + rowCount * 20) + (row * 20) + "px"
-    //         })
-    //       })
-    //     }
-
-    //     row++
-    //     //this.internalElements.shiftRow(row, this.getNumberOfRowsToVisble() - 2)
-    //   }
-    //   this.updateCellContent(fromRow, rowCount);
-    // }
     if ((fromRow + visibleRows <= this.dataTable.length) && pixelScrolled === 0 && !isUpScroll) {
       dataTableGrid.innerHTML = ""
       dataTableGrid.appendChild(this.addRowPanel(fromRow, rowCount, 1));
@@ -219,17 +194,18 @@ export class CellFactory {
     }
     return rowHPanel;
   }
+
   insertToData(rowArr) {
     let internalEls = this.internalElements.dataArray;
     for (let i = 0; i < rowArr; i += this.options.columns.length) {
     }
   }
 
-  refresh(fromRow, rowCount){
+  refresh(isFromUp, rowCount){
     debugger
     let rowDiv;
     let dataTableGrid = this.host.querySelector(".dataTableGrid");
-    for (let row = fromRow, iRow = 0; iRow < rowCount; row++, iRow++) {
+    for (let row = isFromUp?0: this.internalElements.rowCount - rowCount, iRow = 0; iRow < rowCount; row++, iRow++) {
       rowDiv = this.createEl("div",{classList:"bs bsRow"})
         for (let col = 0; col < this.options.columns.length; col++) {
           // console.log(this.internalElements.getData(row, col),row,col);
@@ -360,9 +336,10 @@ class CellArray {
   }
   deleteRows(noOFRowsTodelete, fromBeg) {
   let row = fromBeg ? 0 : this.dataArray.length - (noOFRowsTodelete * this.colCount);
-
   for (let i = row; i < noOFRowsTodelete * this.colCount  ; i+=this.colCount) {
+    (this.dataArray[i] as HTMLElement).parentElement.remove()
     this.dataArray.splice(i,this.colCount);
+
   }
 }
 
